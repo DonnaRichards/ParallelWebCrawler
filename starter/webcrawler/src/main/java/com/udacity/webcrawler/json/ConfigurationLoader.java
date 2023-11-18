@@ -29,7 +29,7 @@ public final class ConfigurationLoader {
    */
   public CrawlerConfiguration load() {
     // TODO: Fill in this method.
-    Reader reader = null;
+    Reader reader;
     try {
       reader = new BufferedReader(new FileReader(path.toString()));
       CrawlerConfiguration crawlerConfiguration =  read(reader);
