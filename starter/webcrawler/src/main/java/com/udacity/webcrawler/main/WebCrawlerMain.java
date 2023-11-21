@@ -35,26 +35,30 @@ public final class WebCrawlerMain {
     CrawlResult result = crawler.crawl(config.getStartPages());
     CrawlResultWriter resultWriter = new CrawlResultWriter(result);
     if (config.getResultPath().isEmpty()) {
-      Writer writer = new PrintWriter(System.out);
-      resultWriter.write(writer);
-      // writing a new line to end here as noticed when both result and profiler output
-      // written to console, there was no new line between them
-      writer.write(String.format("%n"));
-      writer.flush();
+      try (Writer writer = new PrintWriter(System.out)) {
+        resultWriter.write(writer);
+        // writing a new line to end here as noticed when both result and profiler output
+        // written to console, there was no new line between them
+        writer.write(String.format("%n"));
+        writer.flush();
+      }
     }
     else {
-      Writer writer = new FileWriter(this.config.getResultPath(), false);
-      resultWriter.write(writer);
-      writer.flush();
+      try (Writer writer = new FileWriter(this.config.getResultPath(), false)) {
+        resultWriter.write(writer);
+        writer.flush();
+      }
     }
     if (this.config.getProfileOutputPath().isEmpty()) {
-      Writer writer = new PrintWriter(System.out);
-      profiler.writeData(writer);
-      writer.flush();
-    } else{
-      Writer writer = new FileWriter(this.config.getProfileOutputPath(), true);
-      profiler.writeData(writer);
-      writer.flush();
+      try (Writer writer = new PrintWriter(System.out)) {
+        profiler.writeData(writer);
+        writer.flush();
+      }
+    } else {
+      try (Writer writer = new FileWriter(this.config.getProfileOutputPath(), true)) {
+        profiler.writeData(writer);
+        writer.flush();
+      }
     }
   }
 
