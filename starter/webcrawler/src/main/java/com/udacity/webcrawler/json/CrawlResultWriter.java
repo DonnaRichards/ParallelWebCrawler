@@ -50,7 +50,9 @@ public final class CrawlResultWriter {
     ObjectMapper mapper = new ObjectMapper();
     mapper.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
     try {
-      mapper.writeValue(writer, this.result);
+      // Information about PrettyPrinter option found in
+      // https://mkyong.com/java/how-to-enable-pretty-print-json-output-jackson/
+      mapper.writerWithDefaultPrettyPrinter().writeValue(writer, this.result);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

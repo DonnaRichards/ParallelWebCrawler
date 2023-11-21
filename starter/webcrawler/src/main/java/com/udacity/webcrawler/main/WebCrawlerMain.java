@@ -37,6 +37,9 @@ public final class WebCrawlerMain {
     if (config.getResultPath().isEmpty()) {
       Writer writer = new PrintWriter(System.out);
       resultWriter.write(writer);
+      // writing a new line to end here as noticed when both result and profiler output
+      // written to console, there was no new line between them
+      writer.write(String.format("%n"));
       writer.flush();
     }
     else {
