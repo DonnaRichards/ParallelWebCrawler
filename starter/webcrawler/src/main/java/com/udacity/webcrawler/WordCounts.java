@@ -1,13 +1,15 @@
 package com.udacity.webcrawler;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * Utility class that sorts the map of word counts.
  *
  * <p>TODO: Reimplement the sort() method using only the Stream API and lambdas and/or method
- *          references.
+ * references.
  */
 final class WordCounts {
 
@@ -17,7 +19,7 @@ final class WordCounts {
    * {@param popluarWordCount} words and counts.
    *
    * <p>TODO: Reimplement this method using only the Stream API and lambdas and/or method
-   *          references.
+   * references.
    *
    * @param wordCounts       the unsorted map of word counts.
    * @param popularWordCount the number of popular words to include in the result map.
@@ -25,12 +27,12 @@ final class WordCounts {
    */
   static Map<String, Integer> sort(Map<String, Integer> wordCounts, int popularWordCount) {
 
-      return wordCounts.
-              entrySet().
-              stream().
-              sorted(new WordCountComparator()).
-              limit(Math.min(wordCounts.size(), popularWordCount)).
-              collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v)-> k, LinkedHashMap::new));
+    return wordCounts.
+            entrySet().
+            stream().
+            sorted(new WordCountComparator()).
+            limit(Math.min(wordCounts.size(), popularWordCount)).
+            collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> k, LinkedHashMap::new));
   }
 
   /**

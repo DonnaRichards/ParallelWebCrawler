@@ -31,7 +31,7 @@ final class ProfilerImpl implements Profiler {
   @Override
   public <T> T wrap(Class<T> klass, T delegate) {
     if (klass.getMethods().length==0){
-      throw new IllegalArgumentException("Your class has no methods");
+      throw new IllegalArgumentException("Your class has no methods, cannot be used by Profiler");
     }
     Objects.requireNonNull(klass);
     InvocationHandler handler = new ProfilingMethodInterceptor(clock, state, delegate);

@@ -2,7 +2,10 @@ package com.udacity.webcrawler.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -32,11 +35,10 @@ public final class ConfigurationLoader {
     Reader reader;
     try {
       reader = new BufferedReader(new FileReader(path.toString()));
-      CrawlerConfiguration crawlerConfiguration =  read(reader);
+      CrawlerConfiguration crawlerConfiguration = read(reader);
       reader.close();
       return crawlerConfiguration;
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
     return null;
@@ -54,8 +56,7 @@ public final class ConfigurationLoader {
     mapper.disable(AUTO_CLOSE_SOURCE);
     try {
       return mapper.readValue(reader, CrawlerConfiguration.Builder.class).build();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
