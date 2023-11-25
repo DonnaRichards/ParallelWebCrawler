@@ -9,8 +9,6 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,11 +79,11 @@ final class ParallelWebCrawler implements WebCrawler {
 
   protected class CrawlTask extends RecursiveAction {
 
-    private String url;
-    private Instant deadline;
-    private int maxDepth;
-    private Map<String, Integer> counts;
-    private Set<String> visitedUrls;
+    final private String url;
+    final private Instant deadline;
+    final private int maxDepth;
+    final private Map<String, Integer> counts;
+    final private Set<String> visitedUrls;
 
     private CrawlTask(
             String url,
@@ -109,17 +107,20 @@ final class ParallelWebCrawler implements WebCrawler {
           return;
         }
       }
-      if (visitedUrls.contains(url)) {
+
+      if ((!visitedUrls.add(url))) {
         return;
       }
-      visitedUrls.add(url);
+
       PageParser.Result result = pageParserFactory.get(url).parse();
       for (ConcurrentMap.Entry<String, Integer> e : result.getWordCounts().entrySet()) {
-        if (counts.containsKey(e.getKey())) {
-          counts.put(e.getKey(), e.getValue() + counts.get(e.getKey()));
-        } else {
-          counts.put(e.getKey(), e.getValue());
-        }
+        counts.compute(e.getKey(), (key, value) -> {
+          if (value != null) {
+            return e.getValue() + value;
+          } else {
+            return e.getValue();
+          }
+        });
       }
       List<CrawlTask> tasks = new ArrayList<>();
       for (String link : result.getLinks()) {
