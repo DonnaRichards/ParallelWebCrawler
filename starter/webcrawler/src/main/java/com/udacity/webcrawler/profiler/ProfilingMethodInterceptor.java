@@ -27,28 +27,30 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args)
           throws Throwable {
+    Instant startMethodTime = clock.instant();
+    Object returnObj;
     if (method.getAnnotation(Profiled.class) != null) {
-      if ("equals".equals(method.getName()) && Object.class.equals(method.getDeclaringClass())) {
-        // Special handling for Object#equals(Object)
-        return delegate.equals(args[0]);
-      }
-      else {
-        Instant startMethodTime = clock.instant();
-        try {
-          return method.invoke(delegate, args);
-        } catch (InvocationTargetException e) {
-          throw e.getTargetException();
-        } catch (IllegalAccessException e) {
-          throw new RuntimeException(e);
-        } finally {
-            Instant finishMethodTime = clock.instant();
-            state.record(delegate.getClass(), method,
-                    Duration.between(startMethodTime, finishMethodTime));
+      try {
+        if ("equals".equals(method.getName()) && Object.class.equals(method.getDeclaringClass())) {
+          // Special handling for Object#equals(Object)
+          returnObj = delegate.equals(args[0]);
         }
+        else {
+          returnObj = method.invoke(delegate, args);
+        }
+      } catch (InvocationTargetException e) {
+        throw e.getTargetException();
+      } catch (IllegalAccessException e) {
+        throw new RuntimeException(e);
+      } finally {
+          Instant finishMethodTime = clock.instant();
+          state.record(delegate.getClass(), method,
+                  Duration.between(startMethodTime, finishMethodTime));
       }
     }
     else {
-      return method.invoke(delegate, args);
+      returnObj = method.invoke(delegate, args);
     }
+    return returnObj;
   }
 }
