@@ -30,17 +30,10 @@ public final class ConfigurationLoader {
    *
    * @return the loaded {@link CrawlerConfiguration}.
    */
-  public CrawlerConfiguration load() {
-    Reader reader;
-    try {
-      reader = new BufferedReader(new FileReader(path.toString()));
-      CrawlerConfiguration crawlerConfiguration = read(reader);
-      reader.close();
-      return crawlerConfiguration;
-    } catch (IOException e) {
-      e.printStackTrace();
+  public CrawlerConfiguration load() throws IOException {
+    try (Reader reader = new BufferedReader(new FileReader(path.toString()))) {
+      return read(reader);
     }
-    return null;
   }
 
   /**
