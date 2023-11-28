@@ -31,13 +31,9 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
     if (method.getAnnotation(Profiled.class) != null) {
       Instant startMethodTime = clock.instant();
       try {
-        if ("equals".equals(method.getName()) && Object.class.equals(method.getDeclaringClass())) {
-          // Special handling for Object#equals(Object)
-          returnObj = delegate.equals(args[0]);
-        }
-        else {
-          returnObj = method.invoke(delegate, args);
-        }
+        // Special handling for Object#equals(Object)
+        returnObj = "equals".equals(method.getName()) && Object.class.equals(method.getDeclaringClass()) ?
+                delegate.equals(args[0]) : method.invoke(delegate, args);
       } catch (InvocationTargetException e) {
         throw e.getTargetException();
       } catch (IllegalAccessException e) {
@@ -49,7 +45,9 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
       }
     }
     else {
-      returnObj = method.invoke(delegate, args);
+      // Special handling for Object#equals(Object)
+      returnObj = "equals".equals(method.getName()) && Object.class.equals(method.getDeclaringClass()) ?
+              delegate.equals(args[0]) : method.invoke(delegate, args);
     }
     return returnObj;
   }
